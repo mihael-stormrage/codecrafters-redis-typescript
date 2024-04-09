@@ -1,19 +1,11 @@
-enum Commands {
-  PING = 'PING',
-  ECHO = 'ECHO',
-}
+import decode from './decoder.ts';
+import RedisCallQueue from './RedisCallQueue.ts';
 
-const parse = (data: string): [Commands, string][] => {
-  const keys = data
-    .trim()
-    .split('\r\n')
-    .slice(1)
-    .filter((_, i) => i % 2);
-  const commands: [Commands, string][] = [];
-  for (let i = 0; i < keys.length; i += 2) {
-    commands.push([keys[i] as Commands, keys[i + 1]]);
-  }
-  return commands;
+const parse = (data: string) => {
+  const keys = decode(data);
+  const queue = new RedisCallQueue();
+  keys.forEach((k) => queue.push(k));
+  return queue;
 };
 
-export { parse as default, Commands };
+export default parse;
