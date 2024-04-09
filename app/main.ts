@@ -1,22 +1,8 @@
-import * as net from "node:net";
-import parse, { Commands } from "./parser.ts";
+import parse from './parser.ts';
 
-const execCom = (command: Commands, arg: string) => {
-  switch (command.toUpperCase()) {
-    case Commands.PING:
-      return 'PONG';
-    case Commands.ECHO:
-      return arg;
-  }
-};
+export const cache: Record<string, string> = {};
 
-const server: net.Server = net.createServer((connection: net.Socket) => {
-  connection.on('data', (data) => {
-    const commands = parse(data.toString());
-    commands.forEach((com) => {
-      connection.write(`+${execCom(...com)}\r\n`);
-    });
-  });
+Deno.serve({ port: 6379 }, async (req) => {
+  parse(await req.text());
+  return new Response();
 });
-
-server.listen(6379, "127.0.0.1");
