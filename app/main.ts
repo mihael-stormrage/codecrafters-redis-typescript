@@ -1,8 +1,13 @@
+import { createServer } from 'node:net';
 import parse from './parser.ts';
 
-export const cache: Record<string, string> = {};
-
-Deno.serve({ port: 6379 }, async (req) => {
-  parse(await req.text());
-  return new Response();
+const server = createServer((connection) => {
+  connection.on('data', (data) => {
+    const queue = parse(data.toString());
+    queue.calls.forEach((call) => {
+      connection.write(call.exec());
+    });
+  });
 });
+
+server.listen(6379, '127.0.0.1');

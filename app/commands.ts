@@ -1,5 +1,5 @@
+import cache from './kv.ts';
 import { encodeBulk, encodeSimple } from './encoder.ts';
-import { cache } from './main.ts';
 
 type ComKey = keyof typeof Commands;
 type Command<C extends ComKey> = typeof Commands[C];
@@ -18,7 +18,7 @@ const Commands = {
 };
 
 function isCommand(key: string): asserts key is ComKey {
-  if (key !in Commands) throw new Error(`${key} is not a command`);
+  if (!(key in Commands)) throw new Error(`${key} is not a command`);
 }
 
 export { Commands as default, type Command, type ComKey, isCommand };
