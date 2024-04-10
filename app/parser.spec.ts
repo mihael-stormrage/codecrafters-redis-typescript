@@ -6,7 +6,7 @@ import { parsedKeys, payload } from './test.resources.ts';
 Deno.test('parser', () => {
   const { last: redisCall } = parse(payload);
   const parsedCommand = [
-    redisCall.method.name,
+    redisCall.name,
     ...redisCall.argumentsList
   ];
   assertEquals(parsedCommand, parsedKeys);
