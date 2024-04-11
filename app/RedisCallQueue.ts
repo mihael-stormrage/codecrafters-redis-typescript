@@ -21,6 +21,10 @@ class RedisCallQueue {
     // TODO?: new Parser() with state machine
     if (this.last?.isWaitingArgs) return this.last.push(key);
     const com = key.toLowerCase();
+    if (this.last?.name === 'set' && com === 'px') {
+      this.last.length = 3;
+      return;
+    }
     isCommand(com);
     this.calls.push(newRedisCall(com));
   }
