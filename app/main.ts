@@ -1,16 +1,11 @@
 import { createServer } from 'node:net';
+import { parseArgs } from 'std/cli/parse_args.ts';
 import parse from './parser.ts';
 
-const defaultPort = 6379;
-
-const parseCliArgs = () => {
-  const args = Deno.args;
-  const portIndex = args.indexOf('--port') + 1;
-  const port = Number(args[portIndex] ?? defaultPort);
-  return { port };
-};
-
-const { port } = parseCliArgs();
+const { port } = parseArgs(Deno.args, {
+  string: ['port'],
+  default: { port: 6379 },
+});
 
 const server = createServer((connection) => {
   connection.on('data', (data) => {
@@ -21,4 +16,4 @@ const server = createServer((connection) => {
   });
 });
 
-server.listen(port, '127.0.0.1');
+server.listen(Number(port), '127.0.0.1');
