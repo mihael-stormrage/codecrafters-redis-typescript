@@ -1,4 +1,4 @@
-import { RedisCallEcho, RedisCallGet, RedisCallPing, RedisCallSet } from './index.ts';
+import { RedisCallEcho, RedisCallGet, RedisCallPing, RedisCallSet, RedisCallInfo } from './index.ts';
 import type RedisCall from './RedisCall.ts';
 
 type ComKey = keyof typeof Commands;
@@ -8,6 +8,7 @@ const Commands = {
   echo: RedisCallEcho,
   set: RedisCallSet,
   get: RedisCallGet,
+  info: RedisCallInfo,
 };
 
 const newRedisCall = (name: ComKey): RedisCall => {
