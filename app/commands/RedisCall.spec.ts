@@ -1,15 +1,24 @@
+import { assertEquals } from 'std/assert/assert_equals.ts';
 import { RedisCallEcho, RedisCallGet, RedisCallPing, RedisCallSet } from './index.ts';
 import RedisCallQueue from 'src/RedisCallQueue.ts';
+import { encodeSimple, encodeBulk } from 'src/encoder.ts';
 
-const call = new RedisCallPing();
-new RedisCallEcho()
-new RedisCallSet();
-new RedisCallGet();
-const q = new RedisCallQueue();
+Deno.test('instantiate RedisCall-s', () => {
+  new RedisCallPing();
+  new RedisCallEcho()
+  new RedisCallSet();
+  new RedisCallGet();
+  new RedisCallQueue();
+});
 
-q.push('ping');
-q.push('ping');
-q.push('echo');
-q.push('foo');
-q.push('set');
-q.push('foo');
+Deno.test('queue execution', () => {
+  const q = new RedisCallQueue();
+  const incomingTokens = ['ping', 'ping', 'set', 'foo', 'bar', 'echo', 'foo', 'get', 'foo', 'info'];
+  const expectedResults = ['PONG', 'PONG', 'OK'].map(encodeSimple)
+    .concat(['foo', 'bar', 'role:master'].map((v) => encodeBulk([v])));
+
+  incomingTokens.forEach((key) => q.push(key));
+  q.calls.forEach((call, i) => {
+    assertEquals(call.exec(), expectedResults[i]);
+  });
+});

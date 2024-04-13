@@ -18,7 +18,10 @@ abstract class RedisCall<
     return `${this.name} ${this.argumentsList.join(' ')}`;
   }
 
-  exec = () => this.method(...this.argumentsList as A);
+  exec() {
+    // if (Deno.env.get('DEBUG')) console.log(this.query); // TODO: proper debug mode
+    return this.method(...this.argumentsList as A); // FIXME?: type casting
+  }
 
   push(arg: typeof this.argumentsList[number]) {
     if (!this.isWaitingArgs) {

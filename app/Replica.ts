@@ -2,4 +2,9 @@ interface ReplicaInfo {
   role: 'master' | 'slave';
 }
 
-export default ReplicaInfo;
+export const replica: ReplicaInfo = {
+  role: 'master',
+};
+
+export default replica;
+export type { ReplicaInfo };
