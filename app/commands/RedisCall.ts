@@ -1,33 +1,32 @@
 import type { ComKey } from './commands.ts';
 
-abstract class RedisCall<
-  N extends ComKey = ComKey,
-  A extends unknown[] = unknown[]
-> {
-  abstract readonly name: N;
-  abstract length: Parameters<typeof this.method>['length'];
-  argumentsList: unknown[] = [];
+abstract class RedisCall {
+  abstract readonly minArgs: number;
+  abstract readonly maxArgs: number;
 
-  abstract method(...args: A): string;
+  constructor(public readonly name: ComKey, public argumentsList: readonly string[] = []) {}
 
-  get isWaitingArgs() {
-    return this.argumentsList.length < this.length;
+  get length() {
+    return this.argumentsList.length;
+  }
+
+  abstract method(): string;
+
+  exec() {
+    this.validateArgs();
+    return this.method();
   }
 
   get query() {
     return `${this.name} ${this.argumentsList.join(' ')}`;
   }
 
-  exec() {
-    // if (Deno.env.get('DEBUG')) console.log(this.query); // TODO: proper debug mode
-    return this.method(...this.argumentsList as A); // FIXME?: type casting
-  }
-
-  push(arg: typeof this.argumentsList[number]) {
-    if (!this.isWaitingArgs) {
-      throw new Error(`Too many arguments: ${this.query}`);
-    }
-    this.argumentsList.push(arg);
+  protected validateArgs() {
+    if (this.length <= this.maxArgs) return;
+    if (this.length >= this.minArgs) return;
+    const msg = `(error) wrong number of arguments (given ${this.length}, expected ${this.minArgs}..${this.maxArgs})`;
+    console.error(msg);
+    throw new Error(msg);
   }
 }
 

@@ -11,8 +11,8 @@ const Commands = {
   info: RedisCallInfo,
 };
 
-const newRedisCall = (name: ComKey): RedisCall => {
-  return new Commands[name];
+const newRedisCall = (name: ComKey, args: string[]): RedisCall => {
+  return new Commands[name](name, args);
 };
 
 function isCommand(key: string): asserts key is ComKey {

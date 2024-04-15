@@ -4,7 +4,7 @@ import { encodeBulk } from './encoder.ts';
 import { parsedKeys, payload } from './test.resources.ts';
 
 Deno.test('parser', () => {
-  const { last: redisCall } = parse(payload);
+  const [redisCall] = parse(payload).calls;
   const parsedCommand = [
     redisCall.name,
     ...redisCall.argumentsList

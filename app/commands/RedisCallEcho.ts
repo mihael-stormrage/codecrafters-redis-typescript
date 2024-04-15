@@ -1,11 +1,12 @@
 import RedisCall from './RedisCall.ts';
 import { encodeBulk } from 'src/encoder.ts';
 
-class RedisCallEcho extends RedisCall<'echo', [string]> {
-  readonly name = 'echo';
-  readonly length = 1;
+class RedisCallEcho extends RedisCall {
+  readonly minArgs = 1;
+  readonly maxArgs = 1;
 
-  method(msg: string) {
+  method() {
+    const [msg] = this.argumentsList;
     return encodeBulk([msg]);
   }
 }

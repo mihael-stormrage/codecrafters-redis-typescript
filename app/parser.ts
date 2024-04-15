@@ -2,9 +2,9 @@ import decode from './decoder.ts';
 import RedisCallQueue from './RedisCallQueue.ts';
 
 const parse = (data: string) => {
-  const keys = decode(data);
+  const commands = decode(data);
   const queue = new RedisCallQueue();
-  keys.forEach((k) => queue.push(k));
+  commands.forEach((com) => queue.push(com));
   return queue;
 };
 

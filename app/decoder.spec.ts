@@ -3,5 +3,5 @@ import decode from './decoder.ts';
 import { parsedKeys, payload } from './test.resources.ts';
 
 Deno.test('decoder', () => {
-  assertEquals(decode(payload), parsedKeys);
+  assertEquals(decode(payload), [parsedKeys]);
 });

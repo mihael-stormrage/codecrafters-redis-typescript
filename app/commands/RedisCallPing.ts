@@ -1,13 +1,13 @@
 import RedisCall from './RedisCall.ts';
-import { encodeSimple } from 'src/encoder.ts';
+import { encodeBulk, encodeSimple } from 'src/encoder.ts';
 
-class RedisCallPing extends RedisCall<'ping', [] | [string]> {
-  readonly name = 'ping';
-  length = 0 as const;
+class RedisCallPing extends RedisCall {
+  readonly minArgs = 0;
+  readonly maxArgs = 1;
 
-  // TODO: implement ECHO if argument present
-  method(_msg?: string) {
-    return encodeSimple('PONG');
+  method() {
+    const [msg] = this.argumentsList;
+    return msg ? encodeBulk([msg]) : encodeSimple('PONG');
   }
 }
 
