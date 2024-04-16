@@ -7,7 +7,7 @@ class RedisCallEcho extends RedisCall {
 
   method() {
     const [msg] = this.argumentsList;
-    return encodeBulk([msg]);
+    return encodeBulk(msg);
   }
 }
 

@@ -10,5 +10,5 @@ Deno.test('parser', () => {
     ...redisCall.argumentsList
   ];
   assertEquals(parsedCommand, parsedKeys);
-  assertEquals(redisCall.exec(), encodeBulk(['hey']));
+  assertEquals(redisCall.exec(), encodeBulk('hey'));
 });

@@ -7,7 +7,7 @@ class RedisCallPing extends RedisCall {
 
   method() {
     const [msg] = this.argumentsList;
-    return msg ? encodeBulk([msg]) : encodeSimple('PONG');
+    return msg ? encodeBulk(msg) : encodeSimple('PONG');
   }
 }
 

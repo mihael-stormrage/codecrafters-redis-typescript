@@ -9,7 +9,7 @@ class RedisCallGet extends RedisCall {
   method(): string {
     const [k] = this.argumentsList;
     const { [k]: { value } } = cache;
-    return encodeBulk([value]);
+    return encodeBulk(value);
   }
 }
 
