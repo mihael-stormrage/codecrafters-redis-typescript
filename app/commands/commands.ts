@@ -5,6 +5,7 @@ import {
   RedisCallGet,
   RedisCallInfo,
   RedisCallReplconf,
+  RedisCallPsync,
 } from './index.ts';
 import type RedisCall from './RedisCall.ts';
 
@@ -17,6 +18,7 @@ const Commands = {
   get: RedisCallGet,
   info: RedisCallInfo,
   replconf: RedisCallReplconf,
+  psync: RedisCallPsync,
 };
 
 const newRedisCall = (name: ComKey, args: string[]): RedisCall => {
@@ -25,7 +27,6 @@ const newRedisCall = (name: ComKey, args: string[]): RedisCall => {
 
 function isCommand(key: string): asserts key is ComKey {
   if (key in Commands) return;
-  // console.error(`${key} is not a command`);
   throw new Error(`${key} is not a command`);
 }
 

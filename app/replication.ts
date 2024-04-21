@@ -14,20 +14,21 @@ const sendTcp = async (msg: string[], connection: Deno.TcpConn) => {
   return val.join('').trim();
 };
 
-type ReqToMaster = [cmd: string[], expected: string, errMsg: (msg: string) => string];
+type ReqToMaster = [cmd: string[], expected: string, errMsg: string];
 
 const replicaWarmUp = async (masterHost: string, masterPort: string | number, port: string) => {
   replica.role = 'slave';
-  const replconfErrMsg = (ok: string) => `Replconf isn't ok, instead: ${ok}`;
+  const replconfErrMsg = "Replconf isn't ok";
   const requests: ReqToMaster[] = [
-    [['ping'], 'PONG', (pong: string) => `Master didn't pong, instead: ${pong}`],
+    [['ping'], 'PONG', "Master didn't pong"],
     [['REPLCONF', 'listening-port', port], 'OK', replconfErrMsg],
     [['REPLCONF', 'capa', 'psync2'], 'OK', replconfErrMsg],
+    [['PSYNC', '?', '-1'], 'FULLRESYNC ? 0', "Master isn't synced"],
   ];
   const connToMaster = await Deno.connect({ hostname: masterHost, port: Number(masterPort) });
   for (const [cmd, expected, errMsg] of requests) {
     const response = await sendTcp(cmd, connToMaster);
-    if (response !== expected) throw new Error(errMsg(response));
+    if (response !== expected) throw new Error(`${errMsg}, instead: ${response}`);
   }
 };
 
