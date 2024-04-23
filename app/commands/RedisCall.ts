@@ -10,7 +10,7 @@ abstract class RedisCall {
     return this.argumentsList.length;
   }
 
-  abstract method(): string;
+  abstract method(): string | Uint8Array;
 
   exec() {
     this.validateArgs();

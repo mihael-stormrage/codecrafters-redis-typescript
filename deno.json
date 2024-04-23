@@ -1,7 +1,7 @@
 {
   "imports": {
     "src/": "./app/",
-    "std/": "https://deno.land/std@0.222.1/"
+    "std/": "https://deno.land/std@0.223.0/"
   },
   "test": {
     "include": ["**/*.spec.ts"]

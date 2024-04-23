@@ -9,4 +9,16 @@ const encodeArray = (data: string[]) => {
   return `*${data.length}\r\n${encoded}`;
 };
 
-export { encodeSimple, encodeBulk, encodeBulkMultiline, encodeArray };
+const concatUint8Array = (...uint8Arrays: Uint8Array[]): Uint8Array => {
+  const totalLength = uint8Arrays.reduce((acc, curr) => acc + curr.length, 0);
+  const mergedArray = new Uint8Array(totalLength);
+  const iter = (i = 0, offset = 0): void => {
+    if (i >= uint8Arrays.length) return;
+    mergedArray.set(uint8Arrays[i], offset);
+    return iter(i + 1, offset + uint8Arrays[i].length);
+  };
+  iter();
+  return mergedArray;
+};
+
+export { encodeSimple, encodeBulk, encodeBulkMultiline, encodeArray, concatUint8Array };
