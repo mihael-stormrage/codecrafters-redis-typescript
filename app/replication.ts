@@ -5,7 +5,7 @@ import handleConnection from './handlers.ts';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const sendTcp = async (msg: string[], connection: Deno.TcpConn) => {
+const sendTcp = async (msg: string[], connection: Deno.Conn) => {
   await connection.write(encoder.encode(encodeArray(msg)));
   const reader = connection.readable.getReader();
   const { value } = await reader.read();
@@ -17,7 +17,7 @@ const sendTcp = async (msg: string[], connection: Deno.TcpConn) => {
 
 type ReqToMaster = [cmd: string[], expected: string, errMsg: string];
 
-const replicaWarmUp = async (masterHost: string, masterPort: string | number, port: string) => {
+const replicaWarmUp = async (connToMaster: Deno.Conn, port: string) => {
   replica.role = 'slave';
   const replconfErrMsg = "Replconf isn't ok";
   const requests: ReqToMaster[] = [
@@ -26,7 +26,6 @@ const replicaWarmUp = async (masterHost: string, masterPort: string | number, po
     [['REPLCONF', 'capa', 'psync2'], 'OK', replconfErrMsg],
     [['PSYNC', '?', '-1'], 'FULLRESYNC', "Master isn't synced"],
   ];
-  const connToMaster = await Deno.connect({ hostname: masterHost, port: Number(masterPort) });
   for (const [cmd, expected, errMsg] of requests) {
     const response = await sendTcp(cmd, connToMaster);
     if (!response.startsWith(expected)) throw new Error(`${errMsg}, instead: ${response}`);
