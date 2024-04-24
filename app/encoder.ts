@@ -1,3 +1,5 @@
+const encoder = new TextEncoder();
+
 const encodeSimple = (data: string) => `+${data}\r\n`;
 const encodeBulk = (data: string): string => {
   if (!data) return '$-1\r\n';
@@ -7,7 +9,10 @@ const encodeBulkMultiline = (lines: string[]) => encodeBulk(lines.join('\r\n'));
 const encodeArray = (data: string[]) => {
   const encoded = data.map((k) => encodeBulk(k)).join('');
   return `*${data.length}\r\n${encoded}`;
+
 };
+
+const toUint8Arr = (v: string | Uint8Array) => typeof v === 'string' ? encoder.encode(v) : v;
 
 const concatUint8Array = (...uint8Arrays: Uint8Array[]): Uint8Array => {
   const totalLength = uint8Arrays.reduce((acc, curr) => acc + curr.length, 0);
@@ -21,4 +26,4 @@ const concatUint8Array = (...uint8Arrays: Uint8Array[]): Uint8Array => {
   return mergedArray;
 };
 
-export { encodeSimple, encodeBulk, encodeBulkMultiline, encodeArray, concatUint8Array };
+export { encodeSimple, encodeBulk, encodeBulkMultiline, encodeArray, toUint8Arr, concatUint8Array };

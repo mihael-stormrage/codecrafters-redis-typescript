@@ -1,3 +1,5 @@
+import { decodeBase64 } from 'std/encoding/base64.ts';
+
 interface ReplicaInfo {
   role: 'master' | 'slave';
   master_replid: string,
@@ -10,5 +12,12 @@ const replica: ReplicaInfo = {
   master_repl_offset: 0,
 }
 
+const emptyRdbBase64
+  = 'UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3Rp'
+  + 'bWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==';
+const emptyRdb = decodeBase64(emptyRdbBase64);
+const lengthPrefix = `$${emptyRdb.length}\r\n`;
+
 export default replica;
 export type { ReplicaInfo };
+export { emptyRdb, lengthPrefix };

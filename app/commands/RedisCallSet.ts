@@ -5,6 +5,7 @@ import { encodeSimple } from 'src/encoder.ts';
 class RedisCallSet extends RedisCall {
   readonly minArgs = 1;
   readonly maxArgs = 4;
+  readonly isWrite = true;
 
   method(): string {
     const [k, v, modificator, modValue] = this.argumentsList;

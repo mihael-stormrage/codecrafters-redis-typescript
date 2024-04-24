@@ -1,7 +1,10 @@
 import { createServer } from 'node:net';
 import { parseArgs } from 'std/cli/parse_args.ts';
+import { isDefined, isReplconf } from './util.ts';
 import parse from './parser.ts';
 import replicaWarmUp from './replication.ts';
+import { connFromReplicas } from './commands/index.ts';
+import replica from './Replica.ts';
 
 const { port, replicaof: masterHost, _: [masterPort] } = parseArgs(Deno.args, {
   string: ['port', 'replicaof'],
@@ -20,13 +23,22 @@ const server = createServer((connection) => {
   connection.on('data', (data) => {
     try {
       const queue = parse(data.toString());
-      queue.calls.forEach((call) => {
-        connection.write(call.exec());
-      });
+      // FIXME(?): Queue is recreated every call
+      queue.calls
+        .map((call) => {
+          const res = call.exec();
+          if (isReplconf(call) && call.toSave) call.saveConnToMaster(connection);
+          if (call.isWrite && replica.role === 'master') connFromReplicas
+            // FIXME(?): Only works while data chunk is one call long
+            .forEach((replica) => replica.write(data));
+          return res;
+        })
+        .filter(isDefined)
+        .forEach((v) => connection.write(v));
     } catch (error) {
       console.error(error);
     }
   });
 });
 
-server.listen(Number(port), '127.0.0.1');
+server.listen(+port, '127.0.0.1');

@@ -1,8 +1,11 @@
 import type { ComKey } from './commands.ts';
+import { toUint8Arr } from 'src/encoder.ts';
+import replica from 'src/Replica.ts';
 
 abstract class RedisCall {
   abstract readonly minArgs: number;
   abstract readonly maxArgs: number;
+  readonly isWrite: boolean = false;
 
   constructor(public readonly name: ComKey, public argumentsList: readonly string[] = []) {}
 
@@ -12,9 +15,12 @@ abstract class RedisCall {
 
   abstract method(): string | Uint8Array;
 
-  exec() {
+  exec(): Uint8Array | void {
     this.validateArgs();
-    return this.method();
+    const result = toUint8Arr(this.method());
+    if (!this.isWrite) return result;
+    if (replica.role === 'slave') return;
+    return result;
   }
 
   get query() {
