@@ -1,5 +1,6 @@
 import { encodeArray } from './encoder.ts';
 import replica from './Replica.ts';
+import handleConnection from './handlers.ts';
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -30,6 +31,7 @@ const replicaWarmUp = async (masterHost: string, masterPort: string | number, po
     const response = await sendTcp(cmd, connToMaster);
     if (!response.startsWith(expected)) throw new Error(`${errMsg}, instead: ${response}`);
   }
+  return handleConnection(connToMaster);
 };
 
 export default replicaWarmUp;

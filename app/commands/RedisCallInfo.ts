@@ -8,14 +8,11 @@ class RedisCallInfo extends RedisCall implements Sections {
   readonly maxArgs = 1;
 
   replication = () => ['# Replication', ...serialize(replica)];
-  // replication = () => serialize(replica);
 
   method() {
     const [section = 'replication'] = this.argumentsList;
     assertInfoSection(section.toLowerCase());
-    const res = encodeBulkMultiline(this.replication());
-    console.log(res);
-    return res;
+    return encodeBulkMultiline(this.replication());
   }
 }
 
