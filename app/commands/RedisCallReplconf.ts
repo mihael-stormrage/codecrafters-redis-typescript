@@ -1,17 +1,15 @@
-import type { Socket } from "node:net";
 import RedisCall from './RedisCall.ts';
 import { encodeSimple } from 'src/encoder.ts';
 
-const connFromReplicas: Set<Socket> = new Set();
+const connFromReplicas: Set<Deno.Conn> = new Set();
 
 class RedisCallReplconf extends RedisCall {
   readonly minArgs = 2;
   readonly maxArgs = 4;
   toSave = false;
 
-  saveConnToMaster(conn: Socket) {
+  saveConnToMaster(conn: Deno.Conn) {
     connFromReplicas.add(conn);
-    console.log(conn.address());
     this.toSave = false;
   }
 
